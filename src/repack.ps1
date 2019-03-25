@@ -19,7 +19,7 @@ function repackFiles {
             # Descomprimirlo en un directorio
             $target = $file.replace($extension, "")
             Write-Output "Decompressing $file to $target ..."
-            $ret = callProcess -executable "7z" -arguments $("e `"$file`" `"-o$target`" `* -r")
+            $ret = callProcess -executable "7z" -directory $dir -arguments $("e `"$file`" `"-o$target`" `* -r")
             if ($ret -ne 0) {
                 Write-Output "Ignoring $file since 7zip looks not to like the file..."
             }    

@@ -8,16 +8,26 @@
 #       generate a cbz with the comic
 
 $dir = get-location
+$scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 
-. .\utils.ps1
+. "$scriptDir\utils.ps1"
 
 Write-Output "Looking for pdf files in $dir ..."
 $files = Get-ChildItem -Path $dir -Filter $('*.pdf')
 
 # Create the children directory and copy the pdf there
 foreach ($f in $files) {
-    $new_dir = $dir.path + "\" + $f.name.substring(0, $f.name.LastIndexOf('.'))
-    Remove-Item $new_dir -Recurse -ErrorAction Ignore
-    # Remove the directory if it exists
-    New-Item -ItemType directory -Path ($new_dir)
+    $newDir = $dir.path + "\" + $f.name.substring(0, $f.name.LastIndexOf('.'))
+    # Circumvent known issue with Remove-Item...
+    deleteDirectory($newDir)
+    New-Item -ItemType directory -Path ($newDir)
+    Copy-Item -Path $f.fullname -Destination $newDir
+    # Call java inside the directory
+    $command = "-jar `"$scriptDir\..\lib\pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`""
+    Write-Output "Converting $f..."
+    callProcess -executable "javaw" -directory $newDir -arguments $command
+    Remove-Item -Path ($newDir + "\" + $f.name)
 }
+
+# Repack everything
+& "$PSScriptRoot\zipcomics.ps1"
