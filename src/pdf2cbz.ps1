@@ -38,8 +38,5 @@ if ($files.Length -gt 0) {
     # Repack everything
     zipcomics -sourceDir $tempDir -targetDir $dir
 
-    # Copy files back
-    cp $tempDir/*.cbz $dir
-
     Remove-Item -Path $tempDir -Recurse -Force
 }
