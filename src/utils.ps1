@@ -44,3 +44,26 @@ function deleteDirectory {
         }
     }
 }
+
+# Launched on a parent directory, lists every child directory, compresses its
+#   content to a zip file and renames it as cbz
+
+Add-Type -assembly "system.io.compression.filesystem"
+function zipcomics {
+    param([string]$sourceDir, [string]$targetDir)
+
+    $source = Get-ChildItem -Path $sourceDir -Directory
+    Foreach ($s in $source) {
+        Write-Output $s
+        $destination = Join-path -path $targetDir -ChildPath "$($s.name).cbz"
+        Write-Output "Compressing $destination ..."
+        [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
+    }
+}
+
+# Returns the full path of a temporary directory
+function temporaryDirectory {
+    $tempfile = [System.IO.Path]::GetTempFileName();
+    remove-item $tempfile;
+    (new-item -type directory -path $tempfile).fullName
+}

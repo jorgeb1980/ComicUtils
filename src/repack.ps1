@@ -33,7 +33,7 @@ function repackFiles {
         }
     }
     # Repack the directory
-    & "$PSScriptRoot\zipcomics.ps1"
+    zipcomics -dir $dir
 }
 
 repackFiles -extension '.cbz' -dir $dir.Path
