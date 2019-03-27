@@ -5,15 +5,24 @@ function isDirectory {
     return Test-Path -Path $file -PathType 'Container'
 }
 
+function calculateZeroes {
+    param([int]$totalFiles)
+
+    $asAString = [string] $totalFiles
+    $asAString.Length
+}
+
 function callProcess {
-    param([string]$executable,[string]$directory,[string]$arguments)
+    param([string]$executable,[string]$directory,[string]$arguments,[boolean]$useShellExecute)
 
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = $executable
     $pinfo.Arguments = $arguments
-    #$pinfo.RedirectStandardError = $true
-    #$pinfo.RedirectStandardOutput = $true
-    $pinfo.UseShellExecute = $true
+    $pinfo.UseShellExecute = $useShellExecute
+    if (!$useShellExecute) {
+        $pinfo.RedirectStandardError = $true
+        $pinfo.RedirectStandardOutput = $true
+    }
     $pinfo.WorkingDirectory = $directory
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $pinfo

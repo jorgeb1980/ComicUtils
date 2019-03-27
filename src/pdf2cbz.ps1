@@ -23,15 +23,56 @@ $files = Get-ChildItem -Path $dir -Filter $('*.pdf')
 if ($files.Length -gt 0) {
     # Create the children directory and copy the pdf there
     foreach ($f in $files) {
-        $newDir = ($tempDir + "\" + $f.name.substring(0, $f.name.LastIndexOf('.')))
+        $prefix = $f.name.substring(0, $f.name.LastIndexOf('.'))
+        $newDir = ($tempDir + "\" + $prefix)
+        $suffix = ".jpg"
         New-Item -ItemType directory -Path ($newDir)
         Copy-Item -Path $f.fullname -Destination $newDir
         # Call java inside the directory
         $command = "-jar `"$scriptDir\..\lib\pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`""
         Write-Output "Converting $f..."
-        $ret = callProcess -executable "javaw" -directory $newDir -arguments $command
+        $ret = callProcess -executable "javaw" -directory $newDir -arguments $command -useShellExecute $true
         if ($ret -ne 0) {
             Write-Output "Found some problem while extracting images from " + $f.name
+        }
+        else {
+            # Remove the PDF file
+            Remove-Item -Path ($newDir + "\" + $f.name)  -Force
+            # This library names the images like this:
+            # XXX1.jpg
+            # XXX2.jpg
+            # ...
+            # XXX9.jpg
+            # XXX10.jpg
+            # XXX11.jpg
+            #
+            # Which results in older readers ordering pages like this:
+            # XXX1.jpg
+            # XXX10.jpg
+            # XXX11.jpg
+            # XXX12.jpg
+            # ...
+            # XXX19.jpg
+            # XXX2.jpg
+            # XXX20.jpg
+            # XXX21.jpg
+            # ...
+            # 
+            # We should detect this and rename the files, filling at left with as
+            #   many zeroes as necessary depending on the total files
+            $totalFiles = ( Get-ChildItem $newDir | Measure-Object ).Count
+            if ($totalFiles -gt 9) {
+                # How many zeroes?  
+                $zeroes = calculateZeroes -totalFiles $totalFiles
+                $images = Get-ChildItem -Path $newDir -Filter $('*.jpg')
+                foreach ($image in $images) {
+                    # Get the number
+                    $number = $image.name.replace($prefix, "").replace($suffix, "")
+                    $paddedNumber = $number.PadLeft($zeroes,"0")
+                    $newFile = $prefix + $paddedNumber + $suffix
+                    Rename-Item -Path $image.fullname -NewName ($newDir + "\" + $newFile)
+                }
+            }
         }
     }
 
