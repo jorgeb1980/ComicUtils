@@ -65,7 +65,7 @@ function zipcomics {
     Foreach ($s in $source) {
         Write-Output $s
         $destination = Join-path -path $targetDir -ChildPath "$($s.name).cbz"
-        Write-Output "Compressing $destination ..."
+        Write-Output "Compressing into $destination ..."
         [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
     }
 }

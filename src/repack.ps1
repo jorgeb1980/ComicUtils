@@ -19,11 +19,11 @@ function repackFiles {
         $isDir = isDirectory -file $f.fullname
         if (-Not $isDir) {            
             # Descomprimirlo en un directorio
-            $target = ($tempDir + "\" + $file.replace($extension, ""))
+            $target = ($tempDir + [IO.Path]::DirectorySeparatorChar + $file.replace($extension, ""))
             Write-Output "Decompressing $file to $target ..."
             $ret = callProcess -executable "7z" -directory $dir -arguments $("e `"$file`" `"-o$target`" `* -r") -useShellExecute $false
             if ($ret -ne 0) {
-                Write-Output "Ignoring $file since 7zip looks not to like the file..."
+                Write-Output ("[ERROR] 7z returned: " + $ret)
             }    
             else {
                 # Remove the original file

@@ -24,20 +24,20 @@ if ($files.Length -gt 0) {
     # Create the children directory and copy the pdf there
     foreach ($f in $files) {
         $prefix = $f.name.substring(0, $f.name.LastIndexOf('.'))
-        $newDir = ($tempDir + "\" + $prefix)
+        $newDir = ($tempDir + [IO.Path]::DirectorySeparatorChar + $prefix)
         $suffix = ".jpg"
         New-Item -ItemType directory -Path ($newDir)
         Copy-Item -Path $f.fullname -Destination $newDir
         # Call java inside the directory
-        $command = "-jar `"$scriptDir\..\lib\pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`""
+        $command = ("-jar `"$scriptDir"+[IO.Path]::DirectorySeparatorChar+".."+[IO.Path]::DirectorySeparatorChar+"lib"+[IO.Path]::DirectorySeparatorChar+"pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`"");
         Write-Output "Converting $f..."
-        $ret = callProcess -executable "javaw" -directory $newDir -arguments $command -useShellExecute $true
+        $ret = callProcess -executable "java" -directory $newDir -arguments $command -useShellExecute $false
         if ($ret -ne 0) {
-            Write-Output "Found some problem while extracting images from " + $f.name
+            Write-Output ("[ERROR] Java returned $ret while extracting images from " + $f.name)
         }
         else {
             # Remove the PDF file
-            Remove-Item -Path ($newDir + "\" + $f.name)  -Force
+            Remove-Item -Path ($newDir + [IO.Path]::DirectorySeparatorChar + $f.name)  -Force
             # This library names the images like this:
             # XXX1.jpg
             # XXX2.jpg
@@ -70,7 +70,7 @@ if ($files.Length -gt 0) {
                     $number = $image.name.replace($prefix, "").replace($suffix, "")
                     $paddedNumber = $number.PadLeft($zeroes,"0")
                     $newFile = $prefix + $paddedNumber + $suffix
-                    Rename-Item -Path $image.fullname -NewName ($newDir + "\" + $newFile)
+                    Rename-Item -Path $image.fullname -NewName ($newDir + [IO.Path]::DirectorySeparatorChar + $newFile)
                 }
             }
         }
