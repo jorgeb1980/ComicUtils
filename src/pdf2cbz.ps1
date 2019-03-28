@@ -28,7 +28,7 @@ if ($files.Length -gt 0) {
         $suffix = ".jpg"
         New-Item -ItemType directory -Path ($newDir)
         Copy-Item -Path $f.fullname -Destination $newDir
-        # Call java inside the directory
+        # Call java inside the directory - extract all the images with PDFBox
         $command = ("-jar `"$scriptDir"+[IO.Path]::DirectorySeparatorChar+".."+[IO.Path]::DirectorySeparatorChar+"lib"+[IO.Path]::DirectorySeparatorChar+"pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`"");
         Write-Output "Converting $f..."
         $ret = callProcess -executable "java" -directory $newDir -arguments $command -useShellExecute $false

@@ -18,7 +18,7 @@ function repackFiles {
         $file = $f.name
         $isDir = isDirectory -file $f.fullname
         if (-Not $isDir) {            
-            # Descomprimirlo en un directorio
+            # Decompress it into target temporary directory
             $target = ($tempDir + [IO.Path]::DirectorySeparatorChar + $file.replace($extension, ""))
             Write-Output "Decompressing $file to $target ..."
             $ret = callProcess -executable "7z" -directory $dir -arguments $("e `"$file`" `"-o$target`" `* -r") -useShellExecute $false
