@@ -17,27 +17,30 @@ $scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 $dir = get-location
 $tempDir = temporaryDirectory
 
-Write-Output "Looking for pdf files in $dir ..."
 $files = Get-ChildItem -Path $dir -Filter $('*.pdf')
 
 if ($files.Length -gt 0) {
+    $totalFiles = $files.Length
+    $currentFile = 0
     # Create the children directory and copy the pdf there
     foreach ($f in $files) {
+        Write-Progress -Activity "Extracting images from PDF..." `
+            -Status ("Extracting -> $($f.name) ($($currentFile + 1)/$totalFiles)") `
+            -PercentComplete (100 * $currentFile++ / $totalFiles)
         $prefix = $f.name.substring(0, $f.name.LastIndexOf('.'))
         $newDir = ($tempDir + [IO.Path]::DirectorySeparatorChar + $prefix)
         $suffix = ".jpg"
-        New-Item -ItemType directory -Path ($newDir)
+        New-Item -ItemType directory -Path ($newDir) | Out-Null
         Copy-Item -Path $f.fullname -Destination $newDir
         # Call java inside the directory - extract all the images with PDFBox
         $command = ("-jar `"$scriptDir"+[IO.Path]::DirectorySeparatorChar+".."+[IO.Path]::DirectorySeparatorChar+"lib"+[IO.Path]::DirectorySeparatorChar+"pdfbox-app-2.0.14.jar`" PDFToImage `"" + $f.name + "`"");
-        Write-Output "Converting $f..."
         $ret = callProcess -executable "java" -directory $newDir -arguments $command -useShellExecute $false
         if ($ret -ne 0) {
-            Write-Output ("[ERROR] Java returned $ret while extracting images from " + $f.name)
+            Write-Output ("[ERROR] Java returned $ret while extracting images from $($f.name)")
         }
         else {
             # Remove the PDF file
-            Remove-Item -Path ($newDir + [IO.Path]::DirectorySeparatorChar + $f.name)  -Force
+            Remove-Item -LiteralPath ($newDir + [IO.Path]::DirectorySeparatorChar + $f.name)  -Force
             # This library names the images like this:
             # XXX1.jpg
             # XXX2.jpg
@@ -60,18 +63,18 @@ if ($files.Length -gt 0) {
             # 
             # We should detect this and rename the files, filling at left with as
             #   many zeroes as necessary depending on the total files
-            $totalFiles = ( Get-ChildItem $newDir | Measure-Object ).Count
-            if ($totalFiles -gt 9) {
+            $totalImages = ( Get-ChildItem $newDir | Measure-Object ).Count
+            if ($totalImages -gt 9) {
                 # How many zeroes?  
-                $zeroes = calculateZeroes -totalFiles $totalFiles
+                $zeroes = calculateZeroes -totalFiles $totalImages
                 $images = Get-ChildItem -Path $newDir -Filter $('*.jpg')
-                foreach ($image in $images) {
+                
+                foreach ($image in $images) {               }
                     # Get the number
                     $number = $image.name.replace($prefix, "").replace($suffix, "")
                     $paddedNumber = $number.PadLeft($zeroes,"0")
                     $newFile = $prefix + $paddedNumber + $suffix
                     Rename-Item -Path $image.fullname -NewName ($newDir + [IO.Path]::DirectorySeparatorChar + $newFile)
-                }
             }
         }
     }

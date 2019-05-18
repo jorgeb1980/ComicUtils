@@ -40,10 +40,13 @@ function zipcomics {
     param([string]$sourceDir, [string]$targetDir)
 
     $source = Get-ChildItem -Path $sourceDir -Directory
+    $totalZipFiles = $source.Length
+    $currentZipFile = 0
     Foreach ($s in $source) {
-        Write-Output $s
         $destination = Join-path -path $targetDir -ChildPath "$($s.name).cbz"
-        Write-Output "Compressing into $destination ..."
+        Write-Progress -Activity "Zipping files..." `
+            -Status ("Zipping -> $destination ($($currentZipFile + 1)/$totalZipFiles)")  `
+            -PercentComplete (100 * $currentZipFile++ / $totalZipFiles)
         [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
     }
 }
