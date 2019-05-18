@@ -57,5 +57,14 @@ Get it for:
 
 ## Scripts
 
-+ *repack.ps1* - will repack any .cbz and .cbr file in cwd into a .cbz packed with DEFLATE.  This is compatible with most of the older readers I use, like CDisplay.
-+ *pdf2cbz.ps1* - will convert every PDF in cwd to a set of images using Apache PDFBox, and pack them into a .cbz packed with DEFLATE.
++ *repack.ps1* - will repack any .cbz and .cbr file in cwd into a .cbz comic packed with DEFLATE.  This is compatible with most of the older readers I use, like CDisplay.
++ *pdf2cbz.ps1* - will convert every PDF in cwd into a .cbz comic packed with DEFLATE.
++ *unpack.ps1* - will extract the content of all the comics in cwd into a directory with the same name.  Optional *-extension* parameter.
+
+## Adittional information
+
+For more information please see:
+
+https://en.wikipedia.org/wiki/DEFLATE
+https://www.7-zip.org/faq.html
+https://pdfbox.apache.org/index.html
