@@ -4,7 +4,6 @@
 #   + for each one of them, creates a child directory inside the temporary with the same name without extension,
 #       and copies the pdf inside
 #   + extracts every image in that file inside the child directory using apache pdfbox
-#   + erases the pdf
 #   + once every pdf is extracted into a directory, runs zipcomics.ps1 inside the temporary in order to
 #       generate a cbz with the comic
 #   + copies back the cbz files to the original directory, along the original PDFs
