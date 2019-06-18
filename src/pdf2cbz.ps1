@@ -68,12 +68,13 @@ if ($files.Length -gt 0) {
                 $zeroes = calculateZeroes -totalFiles $totalImages
                 $images = Get-ChildItem -Path $newDir -Filter $('*.jpg')
                 
-                foreach ($image in $images) {               }
+                foreach ($image in $images) {      
                     # Get the number
                     $number = $image.name.replace($prefix, "").replace($suffix, "")
                     $paddedNumber = $number.PadLeft($zeroes,"0")
-                    $newFile = $prefix + $paddedNumber + $suffix
+                    $newFile = $prefix + $paddedNumber + $suffix   
                     Rename-Item -Path $image.fullname -NewName ($newDir + [IO.Path]::DirectorySeparatorChar + $newFile)
+                }
             }
         }
     }
