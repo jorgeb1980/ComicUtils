@@ -13,13 +13,13 @@ function calculateZeroes {
 }
 
 function checkDependencies {
-    $checkJava = check -executable "java.exe" -arguments "--version"
-    $check7z = check -executable "7z.exe" -arguments "--help"
+    $checkJava = check -executable "java" -arguments "--version"
+    $check7z = check -executable "7z" -arguments "--help"
     if (!$checkJava) {
-        Write-Host("Cannot find java.exe in path")
+        Write-Host("Cannot find java in path")
     }
     if (!$check7z) {
-        Write-Host("Cannot find 7z.exe in path")
+        Write-Host("Cannot find 7z in path")
     }
     if (!$check7z -or !$checkJava) {
         Exit -1
