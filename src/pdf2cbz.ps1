@@ -12,6 +12,7 @@
 $scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 
 . "$scriptDir\utils.ps1"
+checkDependencies
 
 $dir = get-location
 $tempDir = temporaryDirectory
@@ -21,6 +22,7 @@ $files = Get-ChildItem -Path $dir -Filter $('*.pdf')
 if ($files.Length -gt 0) {
     $totalFiles = $files.Length
     $currentFile = 0
+
     # Create the children directory and copy the pdf there
     foreach ($f in $files) {
         Write-Progress -Activity "Extracting images from PDF..." `

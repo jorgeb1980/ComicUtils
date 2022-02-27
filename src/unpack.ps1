@@ -11,11 +11,13 @@
 
 param([string]$extension='zip') 
 
+
 $dir = get-location
 
 $scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 
 . "$scriptDir\utils.ps1"
+checkDependencies
 
 # Make sure the extension starts with .
 if (-Not $extension.StartsWith(".")) {
