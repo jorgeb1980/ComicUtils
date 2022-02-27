@@ -6,6 +6,7 @@ $dir = get-location
 $scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 
 . "$scriptDir\utils.ps1"
+checkDependencies
 
 function repackFiles {
     param( [string]$extension, [string]$dir)
@@ -32,11 +33,11 @@ function repackFiles {
         $target = ($tempDir + [IO.Path]::DirectorySeparatorChar + $file.replace($extension, ""))
         $ret = callProcess -executable "7z" -directory $dir -arguments $("e `"$file`" `"-o$target`" `* -r") -useShellExecute $false
         if ($ret -ne 0) {
-            Write-Output ("[ERROR] 7z returned: $ret for file $($f.name)")
+            Write-Host ("[ERROR] 7z returned: $ret for file $($f.name)")
         }    
         else {
             # Remove the original file
-            Remove-Item $file
+            Remove-Item -LiteralPath $file
         }
         
     }

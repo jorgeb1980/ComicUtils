@@ -12,6 +12,37 @@ function calculateZeroes {
     $asAString.Length
 }
 
+function checkDependencies {
+    $checkJava = check -executable "java.exe" -arguments "--version"
+    $check7z = check -executable "7z.exe" -arguments "--help"
+    if (!$checkJava) {
+        Write-Host("Cannot find java.exe in path")
+    }
+    if (!$check7z) {
+        Write-Host("Cannot find 7z.exe in path")
+    }
+    if (!$check7z -or !$checkJava) {
+        Exit -1
+    }
+}
+
+function check {
+    param([string]$executable,[string]$arguments)
+
+    $checked = $true
+    try {
+        $code = callProcess -executable $executable -arguments $arguments -useShellExecute $false
+        if ($code -ne 0) {
+            Write-Host("$executable $arguments -> $code")
+            $checked = $false
+        }
+    }
+    catch {
+        $checked = $false
+    }
+    return $checked
+}
+
 function callProcess {
     param([string]$executable,[string]$directory,[string]$arguments,[boolean]$useShellExecute)
 
@@ -23,7 +54,9 @@ function callProcess {
         $pinfo.RedirectStandardError = $true
         $pinfo.RedirectStandardOutput = $true
     }
-    $pinfo.WorkingDirectory = $directory
+    if ($directory -ne $null){
+        $pinfo.WorkingDirectory = $directory
+    }
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $pinfo
     $p.Start() | Out-Null
