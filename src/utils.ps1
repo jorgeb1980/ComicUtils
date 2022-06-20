@@ -90,3 +90,8 @@ function temporaryDirectory {
     remove-item $tempfile;
     (new-item -type directory -path $tempfile).fullName
 }
+
+function removeBrackets {
+    param([string]$str)
+    return ($str -replace '\s*\[.*\]\s*','').Trim()
+}
