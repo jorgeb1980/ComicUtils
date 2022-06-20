@@ -76,7 +76,8 @@ function zipcomics {
     $totalZipFiles = $source.Length
     $currentZipFile = 0
     Foreach ($s in $source) {
-        $destination = Join-path -path $targetDir -ChildPath "$($s.name).cbz"
+        $noBrackets = removeBrackets($s.name)
+        $destination = Join-path -path $targetDir -ChildPath "$($noBrackets).cbz"
         Write-Progress -Activity "Zipping files..." `
             -Status ("Zipping -> $destination ($($currentZipFile + 1)/$totalZipFiles)")  `
             -PercentComplete (100 * $currentZipFile++ / $totalZipFiles)
