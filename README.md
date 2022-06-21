@@ -1,6 +1,15 @@
 # ComicUtils
 Set of powershell scripts useful for managing a comics collection
 
+## Scripts
+
++ *repack.ps1* - will repack any .cbz and .cbr file in `cwd` into a .cbz comic packed with DEFLATE.  This is compatible with most of the older readers I use, like CDisplay.
++ *pdf2cbz.ps1* - will convert every PDF in `cwd` into a .cbz comic packed with DEFLATE.
++ *unpack.ps1* - will extract the content of all the comics in `cwd` into a directory with the same name.  Optional *-extension* parameter.
++ *pack.ps1* - will make a .cbz file out of any child folder under `cwd`.
+
+Every script will remove brackets in the file names and, if present, text files inside the comics.
+
 ## Requirements
 
 We need the following software (Linux instructions for Debian-like distros, please look for equivalents with your favorite package manager):
@@ -17,7 +26,7 @@ Major  Minor  Build  Revision
 5      1      17134  590
 ```
 
-Get it for:
+Get it for your choice OS:
 + Windows: https://docs.microsoft.com/powershell/scripting/install/installing-windows-powershell
 + Linux: https://docs.microsoft.com/es-es/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6
 + MacOS: brew cask install powershell
@@ -54,12 +63,6 @@ Get it for:
 + Linux: sudo apt install p7zip
     (maybe additional packages will be necessary, like p7zip-rar in certain distros)
 + MacOS: brew install p7zip
-
-## Scripts
-
-+ *repack.ps1* - will repack any .cbz and .cbr file in cwd into a .cbz comic packed with DEFLATE.  This is compatible with most of the older readers I use, like CDisplay.
-+ *pdf2cbz.ps1* - will convert every PDF in cwd into a .cbz comic packed with DEFLATE.
-+ *unpack.ps1* - will extract the content of all the comics in cwd into a directory with the same name.  Optional *-extension* parameter.
 
 ## Adittional information
 
