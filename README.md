@@ -69,5 +69,7 @@ Get it for:
 For more information please see:
 
 https://en.wikipedia.org/wiki/DEFLATE
+
 https://www.7-zip.org/faq.html
+
 https://pdfbox.apache.org/index.html
