@@ -26,7 +26,7 @@ Major  Minor  Build  Revision
 5      1      17134  590
 ```
 
-Get it for your choice OS:
+Get it for your OS:
 + Windows: https://docs.microsoft.com/powershell/scripting/install/installing-windows-powershell
 + Linux: https://docs.microsoft.com/es-es/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6
 + MacOS: brew cask install powershell
