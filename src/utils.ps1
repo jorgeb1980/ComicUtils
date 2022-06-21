@@ -76,7 +76,8 @@ function zipcomics {
     $totalZipFiles = $source.Length
     $currentZipFile = 0
     Foreach ($s in $source) {
-        $destination = Join-path -path $targetDir -ChildPath "$($s.name).cbz"
+        $noBrackets = removeBrackets($s.name)
+        $destination = Join-path -path $targetDir -ChildPath "$($noBrackets).cbz"
         Write-Progress -Activity "Zipping files..." `
             -Status ("Zipping -> $destination ($($currentZipFile + 1)/$totalZipFiles)")  `
             -PercentComplete (100 * $currentZipFile++ / $totalZipFiles)
@@ -89,4 +90,9 @@ function temporaryDirectory {
     $tempfile = [System.IO.Path]::GetTempFileName();
     remove-item $tempfile;
     (new-item -type directory -path $tempfile).fullName
+}
+
+function removeBrackets {
+    param([string]$str)
+    return ($str -replace '\s*\[.*\]\s*','').Trim()
 }

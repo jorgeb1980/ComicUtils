@@ -1,5 +1,5 @@
 # Launched in a parent directory, tries to open with 7zip every rar or zip file present,
-#   decompresses them to a child directory and erases them, and then launches zipcomics.ps1 
+#   decompresses them to a child directory and erases them, and then launches zipcomics
 #   on the child directory in order to pack them again
 
 $dir = get-location
@@ -41,6 +41,9 @@ function repackFiles {
         }
         
     }
+    # Remove .txt files
+    Remove-Item -Path $tempDir -Include "*.txt" -Recurse -Force
+
     # Repack the directory
     zipcomics -sourceDir $tempDir -targetDir $dir
 
