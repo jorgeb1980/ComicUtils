@@ -28,22 +28,23 @@ if ($files.Length -gt 0) {
         Write-Progress -Activity "Extracting images from PDF..." `
             -Status ("Extracting -> $($f.name) ($($currentFile + 1)/$totalFiles)") `
             -PercentComplete (100 * $currentFile++ / $totalFiles)
-        $prefix = $f.name.substring(0, $f.name.LastIndexOf('.'))
+        $nameNoBrackets = $(removeBrackets($f.name))
+        $prefix = $nameNoBrackets.substring(0, $nameNoBrackets.LastIndexOf('.'))
         $newDir = ($tempDir + [IO.Path]::DirectorySeparatorChar + $prefix)
         $suffix = ".jpg"
         New-Item -ItemType directory -Path ($newDir) | Out-Null
         # Remove brackets on the way there
-        $destination = $newDir + [IO.Path]::DirectorySeparatorChar + $(removeBrackets($f.name))
+        $destination = $newDir + [IO.Path]::DirectorySeparatorChar + $nameNoBrackets
         Copy-Item -LiteralPath $f.fullname -Destination $destination
         # Call java inside the directory - extract all the images with PDFBox
-        $command = ("-jar `"$scriptDir" + [IO.Path]::DirectorySeparatorChar + ".." + [IO.Path]::DirectorySeparatorChar + "lib" + [IO.Path]::DirectorySeparatorChar + "pdfbox-app-2.0.14.jar`" PDFToImage `"" + $(removeBrackets($f.name)) + "`"");
+        $command = ("-jar `"$scriptDir" + [IO.Path]::DirectorySeparatorChar + ".." + [IO.Path]::DirectorySeparatorChar + "lib" + [IO.Path]::DirectorySeparatorChar + "pdfbox-app-2.0.14.jar`" PDFToImage `"" + $nameNoBrackets + "`"");
         $ret = callProcess -executable "java" -directory $newDir -arguments $command -useShellExecute $false
         if ($ret -ne 0) {
             Write-Output ("[ERROR] Java returned $ret while extracting images from $($f.name)")
         }
         else {
             # Remove the PDF file
-            Remove-Item -LiteralPath ($newDir + [IO.Path]::DirectorySeparatorChar + $f.name) -Force
+            Remove-Item -LiteralPath ($newDir + [IO.Path]::DirectorySeparatorChar + $nameNoBrackets) -Force
             # This library names the images like this:
             # XXX1.jpg
             # XXX2.jpg
