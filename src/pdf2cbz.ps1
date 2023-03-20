@@ -44,7 +44,7 @@ if ($files.Length -gt 0) {
         }
         else {
             # Remove the PDF file
-            Remove-Item -LiteralPath ($newDir + [IO.Path]::DirectorySeparatorChar + $nameNoBrackets) -Force
+            Remove-Item -LiteralPath ($destination) -Force
             # This library names the images like this:
             # XXX1.jpg
             # XXX2.jpg
@@ -69,15 +69,15 @@ if ($files.Length -gt 0) {
             #   many zeroes as necessary depending on the total files
             $totalImages = ( Get-ChildItem $newDir | Measure-Object ).Count
             if ($totalImages -gt 9) {
-                # How many zeroes?  
+                # How many zeroes?
                 $zeroes = calculateZeroes -totalFiles $totalImages
                 $images = Get-ChildItem -Path $newDir -Filter $('*.jpg')
                 
-                foreach ($image in $images) {      
+                foreach ($image in $images) {
                     # Get the number
                     $number = $image.name.replace($prefix, "").replace($suffix, "")
-                    $paddedNumber = $number.PadLeft($zeroes,"0")
-                    $newFile = $prefix + $paddedNumber + $suffix   
+                    $paddedNumber = $number.PadLeft($zeroes, "0")
+                    $newFile = $prefix + $paddedNumber + $suffix
                     Rename-Item -Path $image.fullname -NewName ($newDir + [IO.Path]::DirectorySeparatorChar + $newFile)
                 }
             }
