@@ -7,10 +7,6 @@ $scriptDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 . "$scriptDir\utils.ps1"
 checkDependencies
 
-$DebugPreference = "Continue"
-
-Write-Debug "Entering padWithZeroes"
-
 zipcomics -sourceDir $dir -targetDir $dir
 
 # Remove packed directories

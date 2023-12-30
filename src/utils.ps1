@@ -79,9 +79,9 @@ function zipcomics {
         padWithZeroes -directory ($sourceDir + [IO.Path]::DirectorySeparatorChar + $s)
         $noBrackets = removeBrackets($s.name)
         $destination = Join-path -path $targetDir -ChildPath "$($noBrackets).cbz"
-       # Write-Progress -Activity "Zipping files..." `
-       #     -Status ("Zipping -> $destination ($($currentZipFile + 1)/$totalZipFiles)")  `
-       #     -PercentComplete (100 * $currentZipFile++ / $totalZipFiles)
+        Write-Progress -Activity "Zipping files..." `
+            -Status ("Zipping -> $destination ($($currentZipFile + 1)/$totalZipFiles)")  `
+            -PercentComplete (100 * $currentZipFile++ / $totalZipFiles)
         [io.compression.zipfile]::CreateFromDirectory($s.fullname, $destination)
     }
 }
@@ -112,7 +112,6 @@ function replaceLastSubstring {
 function padWithZeroes {
     param([string]$directory)
 
-    Write-Debug "Checking directory $directory"
     $totalImages = ( Get-ChildItem $directory | Measure-Object ).Count
     if ($totalImages -gt 9) {
         # How many zeroes?  
@@ -121,14 +120,11 @@ function padWithZeroes {
         
         foreach ($image in $images) {      
             # Get the number
-            Write-Debug "Checking $image..."
             $found = $image -match '(\d+)\.\D+$'
             if ($found) {
                 $number = $matches[1]
-                Write-Debug "Found number $number"
                 $paddedNumber = $number.PadLeft($zeroes,"0")
                 $newFile = replaceLastSubstring -str $image -substr $number -newstr $paddedNumber
-                Write-Debug "Changing $($image.fullname) to $($directory + [IO.Path]::DirectorySeparatorChar + $newFile)"
                 Rename-Item -Path $image.fullname -NewName ($directory + [IO.Path]::DirectorySeparatorChar + $newFile)
             }
         }
