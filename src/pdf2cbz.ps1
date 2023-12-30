@@ -43,7 +43,7 @@ if ($files.Length -gt 0) {
         }
         else {
             # Remove the PDF file
-            Remove-Item -LiteralPath ($newDir + [IO.Path]::DirectorySeparatorChar + $nameNoBrackets) -Force
+            Remove-Item -LiteralPath ($destination) -Force
             # This library names the images like this:
             # XXX1.jpg
             # XXX2.jpg
