@@ -31,7 +31,6 @@ if ($files.Length -gt 0) {
         $nameNoBrackets = $(removeBrackets($f.name))
         $prefix = $nameNoBrackets.substring(0, $nameNoBrackets.LastIndexOf('.'))
         $newDir = ($tempDir + [IO.Path]::DirectorySeparatorChar + $prefix)
-        $suffix = ".jpg"
         New-Item -ItemType directory -Path ($newDir) | Out-Null
         # Remove brackets on the way there
         $destination = $newDir + [IO.Path]::DirectorySeparatorChar + $nameNoBrackets
@@ -67,20 +66,7 @@ if ($files.Length -gt 0) {
             # 
             # We should detect this and rename the files, filling at left with as
             #   many zeroes as necessary depending on the total files
-            $totalImages = ( Get-ChildItem $newDir | Measure-Object ).Count
-            if ($totalImages -gt 9) {
-                # How many zeroes?
-                $zeroes = calculateZeroes -totalFiles $totalImages
-                $images = Get-ChildItem -Path $newDir -Filter $('*.jpg')
-                
-                foreach ($image in $images) {
-                    # Get the number
-                    $number = $image.name.replace($prefix, "").replace($suffix, "")
-                    $paddedNumber = $number.PadLeft($zeroes, "0")
-                    $newFile = $prefix + $paddedNumber + $suffix
-                    Rename-Item -Path $image.fullname -NewName ($newDir + [IO.Path]::DirectorySeparatorChar + $newFile)
-                }
-            }
+            padWithZeroes -directory $newDir
             # Remove the original PDF file
             Remove-Item -LiteralPath $f.FullName -Force
         }

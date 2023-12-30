@@ -76,6 +76,7 @@ function zipcomics {
     $totalZipFiles = $source.Length
     $currentZipFile = 0
     Foreach ($s in $source) {
+        padWithZeroes -directory ($sourceDir + [IO.Path]::DirectorySeparatorChar + $s)
         $noBrackets = removeBrackets($s.name)
         $destination = Join-path -path $targetDir -ChildPath "$($noBrackets).cbz"
         Write-Progress -Activity "Zipping files..." `
@@ -95,4 +96,37 @@ function temporaryDirectory {
 function removeBrackets {
     param([string]$str)
     return ($str -replace '\s*\[.*\]\s*','').Trim()
+}
+
+# Credit to https://stackoverflow.com/questions/28436651/replacing-last-occurrence-of-substring-in-string
+function replaceLastSubstring {
+    param(
+        [string]$str,
+        [string]$substr,
+        [string]$newstr
+    )
+
+    return $str.Remove(($lastIndex = $str.LastIndexOf($substr)),$substr.Length).Insert($lastIndex,$newstr)
+}
+
+function padWithZeroes {
+    param([string]$directory)
+
+    $totalImages = ( Get-ChildItem $directory | Measure-Object ).Count
+    if ($totalImages -gt 9) {
+        # How many zeroes?  
+        $zeroes = calculateZeroes -totalFiles $totalImages
+        $images = Get-ChildItem -Path $directory -Filter $('*.jpg')
+        
+        foreach ($image in $images) {      
+            # Get the number
+            $found = $image -match '(\d+)\.\D+$'
+            if ($found) {
+                $number = $matches[1]
+                $paddedNumber = $number.PadLeft($zeroes,"0")
+                $newFile = replaceLastSubstring -str $image -substr $number -newstr $paddedNumber
+                Rename-Item -Path $image.fullname -NewName ($directory + [IO.Path]::DirectorySeparatorChar + $newFile)
+            }
+        }
+    }
 }
